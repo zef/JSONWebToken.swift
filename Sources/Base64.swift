@@ -3,12 +3,12 @@ import Foundation
 
 /// URI Safe base64 encode
 func base64encode(input:NSData) -> String {
-  let data = input.base64EncodedDataWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
-  let string = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
+  let data = input.base64EncodedData(NSData.Base64EncodingOptions(rawValue: 0))
+  let string = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as! String
   return string
-    .stringByReplacingOccurrencesOfString("+", withString: "-", options: NSStringCompareOptions(rawValue: 0), range: nil)
-    .stringByReplacingOccurrencesOfString("/", withString: "_", options: NSStringCompareOptions(rawValue: 0), range: nil)
-    .stringByReplacingOccurrencesOfString("=", withString: "", options: NSStringCompareOptions(rawValue: 0), range: nil)
+    .replacingOccurrences(of: "+", with: "-")
+    .replacingOccurrences(of: "/", with: "_")
+    .replacingOccurrences(of: "=", with: "")
 }
 
 /// URI Safe base64 decode
@@ -18,11 +18,11 @@ func base64decode(input:String) -> NSData? {
   var ending = ""
   if rem > 0 {
     let amount = 4 - rem
-    ending = String(count: amount, repeatedValue: Character("="))
+    ending = String(repeating: Character("="), count: amount)
   }
 
-  let base64 = input.stringByReplacingOccurrencesOfString("-", withString: "+", options: NSStringCompareOptions(rawValue: 0), range: nil)
-    .stringByReplacingOccurrencesOfString("_", withString: "/", options: NSStringCompareOptions(rawValue: 0), range: nil) + ending
+  let base64 = input.replacingOccurrences(of: "-", with: "+")
+    .replacingOccurrences(of: "_", with: "/") + ending
 
-  return NSData(base64EncodedString: base64, options: NSDataBase64DecodingOptions(rawValue: 0))
+  return NSData(base64Encoded: base64, options: NSData.Base64DecodingOptions(rawValue: 0))
 }

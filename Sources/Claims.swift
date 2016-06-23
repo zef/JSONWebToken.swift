@@ -1,10 +1,10 @@
 import Foundation
 
 func validateClaims(payload:Payload, audience:String?, issuer:String?) -> InvalidToken? {
-  return validateIssuer(payload, issuer: issuer) ?? validateAudience(payload, audience: audience) ??
-    validateDate(payload, key: "exp", comparison: .OrderedAscending, failure: .ExpiredSignature, decodeError: "Expiration time claim (exp) must be an integer") ??
-    validateDate(payload, key: "nbf", comparison: .OrderedDescending, failure: .ImmatureSignature, decodeError: "Not before claim (nbf) must be an integer") ??
-    validateDate(payload, key: "iat", comparison: .OrderedDescending, failure: .InvalidIssuedAt, decodeError: "Issued at claim (iat) must be an integer")
+  return validateIssuer(payload: payload, issuer: issuer) ?? validateAudience(payload: payload, audience: audience) ??
+    validateDate(payload: payload, key: "exp", comparison: .orderedAscending, failure: .ExpiredSignature, decodeError: "Expiration time claim (exp) must be an integer") ??
+    validateDate(payload: payload, key: "nbf", comparison: .orderedDescending, failure: .ImmatureSignature, decodeError: "Not before claim (nbf) must be an integer") ??
+    validateDate(payload: payload, key: "iat", comparison: .orderedDescending, failure: .InvalidIssuedAt, decodeError: "Issued at claim (iat) must be an integer")
 }
 
 func validateAudience(payload:Payload, audience:String?) -> InvalidToken? {
@@ -39,10 +39,10 @@ func validateIssuer(payload:Payload, issuer:String?) -> InvalidToken? {
   return nil
 }
 
-func validateDate(payload:Payload, key:String, comparison:NSComparisonResult, failure:InvalidToken, decodeError:String) -> InvalidToken? {
-  if let timestamp = payload[key] as? NSTimeInterval ?? payload[key]?.doubleValue as NSTimeInterval? {
-    let date = NSDate(timeIntervalSince1970: timestamp)
-    if date.compare(NSDate()) == comparison {
+func validateDate(payload:Payload, key:String, comparison:ComparisonResult, failure:InvalidToken, decodeError:String) -> InvalidToken? {
+  if let timestamp = payload[key] as? TimeInterval ?? payload[key]?.doubleValue as TimeInterval? {
+    let date = Date(timeIntervalSince1970: timestamp)
+    if date.compare(Date()) == comparison {
       return failure
     }
   } else if payload[key] != nil {
