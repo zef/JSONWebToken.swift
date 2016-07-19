@@ -178,7 +178,7 @@ public class PayloadBuilder {
   }
 }
 
-public func encode(algorithm:Algorithm, closure:(PayloadBuilder -> ())) -> String {
+public func encode(algorithm:Algorithm, closure:((PayloadBuilder) -> ())) -> String {
   let builder = PayloadBuilder()
   closure(builder)
   return encode(payload: builder.payload, algorithm: algorithm)
